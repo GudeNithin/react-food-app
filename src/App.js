@@ -1,46 +1,42 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Gallery from "./Gallery";
-import "./App.css";
+import React,{useState} from 'react'
+import Product from './Product';
+import './App.css'
 
-const apiKey = "636e1481b4f3c446d26b8eb6ebfe7127";
 const App = () => {
-  const [search, setSearch] = useState("");
-  const [data, setData] = useState([]);
-
-  const handler = (e) => {
+  const [search,setSearch]=useState("");
+  const [data,setData]=useState([]);
+  const YOUR_APP_ID = "bd4becd1";
+  const YOUR_APP_KEY ="1a2614c3641363ac93e81b543a39624c	";
+  const handler=e=>{
     setSearch(e.target.value);
-  };
+  }
 
-  const submitHandler = (e) => {
+  const submitHandler=e=>{
     e.preventDefault();
-    axios
-      .get(
-        `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&tags=${search}&per_page=24&format=json&nojsoncallback=1`
+    fetch(`https://api.edamam.com/search?q=${search}&app_id=${YOUR_APP_ID}&app_key=${YOUR_APP_KEY}&from=0&to=18&calories=591-722&health=alcohol-free`, {
+        method: "GET",
+        headers: {
+          "Edamam-Account-User": "nithin508"  
+        }
+      }).then(
+        response=>response.json()
+      ).then(
+        data=>setData(data.hits)
       )
-      .then((response) => setData(response.data.photos.photo));
-  };
+  }
 
   return (
-    <div className="container">
-      <div className="gallery-card">
-        <h3 className="title">React Photo Gallery</h3>
-        <form onSubmit={submitHandler} className="form">
-          <input
-            type="text"
-            placeholder="Enter Search Element"
-            value={search}
-            onChange={handler}
-            className="input"
-          />
-          <button type="submit" className="button">
-            Search
-          </button>
+    <div>
+      <center>
+        <h5>React Food Munch</h5>
+        <form onSubmit={submitHandler}>
+            <input type="text" placeholder="Enter the Food Item" value={search} onChange={handler}/> <br/>
+            <input type="submit" value="Search"/>
         </form>
-        {data.length > 0 ? <Gallery data={data} /> : <h5 className="no-data">No Data Loaded</h5>}
-      </div>
+        {data.length>0?<Product data={data}/>:null}
+      </center>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
